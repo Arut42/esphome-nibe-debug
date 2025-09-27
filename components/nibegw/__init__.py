@@ -26,6 +26,7 @@ CONF_UDP = "udp"
 CONF_ACKNOWLEDGE_MODBUS40 = "modbus40"
 CONF_ACKNOWLEDGE_RMU40 = "rmu40"
 CONF_ACKNOWLEDGE_SMS40 = "sms40"
+CONF_ACKNOWLEDGE_DEH500 = "deh500"
 CONF_READ_PORT = "read_port"
 CONF_WRITE_PORT = "write_port"
 CONF_SOURCE = "source"
@@ -42,6 +43,7 @@ class Addresses(IntEnum):
     RMU40_S2 = 0x1A
     RMU40_S3 = 0x1B
     RMU40_S4 = 0x1C
+    DEH500 = 0x27
 
 class Token(IntEnum):
   MODBUS_READ = 0x69
