@@ -85,6 +85,7 @@ typedef std::function<int(uint16_t address, byte command, byte *data)> callback_
 #define RMU40_S3 0x1B
 #define RMU40_S4 0x1C
 #define MODBUS40 0x20
+#define DEH500 0x27
 
 class NibeGw {
  private:
