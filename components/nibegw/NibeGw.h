@@ -57,12 +57,22 @@ enum eState {
 };
 
 enum eTokenType {
-  READ_TOKEN = 0x69,
-  WRITE_TOKEN = 0x6B,
-  RMU_WRITE_TOKEN = 0x60,
-  RMU_DATA_MSG = 0x62,
-  RMU_DATA_TOKEN = 0x63,
-  ACCESSORY_TOKEN = 0xEE,
+  ECS_DATA_MSG_1=		  0x55,  
+  RMU_WRITE_TOKEN =   0x60,
+  RMU_DATA_MSG =      0x62,
+  RMU_DATA_TOKEN =    0x63,  
+  MODBUS_DATA_MSG=    0x68,
+  READ_TOKEN =        0x69,
+  MODBUS_READ_RESP=		0x6A,
+  WRITE_TOKEN =       0x6B,
+  MODBUS_WRITE_RESP=	0x6C,
+  MODBUS_ADDRESS_MSG=	0x6E,
+  PRODUCT_INFO_MSG=		0x6D,
+  ECS_DATA_REQ=			  0x90,
+  ECS_DATA_MSG_2=			0xA0,
+  STRING_MSG=  				0xB1,
+  HEATPUMP_REQ=			  0xF7,
+  ACCESSORY_TOKEN =   0xEE
 };
 
 enum eStartByte {
