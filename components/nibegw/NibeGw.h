@@ -140,23 +140,19 @@ class NibeGw {
   boolean connected();
   boolean messageStillOnProgress();
   void loop();
+  void setupDeh500() 
+
 
   void setAcknowledge(byte address, boolean val) {
     if (val)
       addressAcknowledge.insert(address);
+      if(address == DEH500) setupDeh500();
     else
       addressAcknowledge.erase(address);
   }
 
-  void setAckModbus40Address(boolean val) {
-    setAcknowledge(MODBUS40, val);
-  }
-  void setAckSms40Address(boolean val) {
-    setAcknowledge(SMS40, val);
-  }
-  void setAckRmu40Address(boolean val) {
-    setAcknowledge(RMU40, val);
-  }
+  
+
 };
 
 #endif
