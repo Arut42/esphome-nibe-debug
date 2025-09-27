@@ -191,6 +191,7 @@ void NibeGw::handleMsgReceived() {
   const uint8_t command = buffer[3];
   const uint8_t len = buffer[4];
   if (shouldAckNakSend(address)) {
+    ESP_LOGVV(TAG, "Send ACK");
     if (len == 0) {
       int msglen = callback_msg_token_received(address, command, &buffer[index]);
       if (msglen > 0) {
@@ -204,6 +205,7 @@ void NibeGw::handleMsgReceived() {
       stateCompleteAck();
     }
   } else {
+    ESP_LOGVV(TAG, "Send NAK");
     if (len == 0) {
       state = STATE_WAIT_START_SLAVE;
     } else {
