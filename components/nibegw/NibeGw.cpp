@@ -232,7 +232,7 @@ void NibeGw::loop() {
 
   if (RS485->available() > 0) {
     byte b = RS485->read();
-    ESP_LOGVV(TAG, "%02X", b);
+    //ESP_LOGVV(TAG, "%02X", b);
     handleDataReceived(b);
   }
 }
