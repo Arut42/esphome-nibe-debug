@@ -70,6 +70,8 @@ boolean NibeGw::messageStillOnProgress() {
   return false;
 }
 
+bool anySlave = false;
+
 void NibeGw::handleDataReceived(byte b) {
   if (index >= MAX_DATA_LEN) {
     // too long message
@@ -97,6 +99,17 @@ void NibeGw::handleDataReceived(byte b) {
           ESP_LOGD(TAG, "Ignoring byte %02X", b);
         }
       }
+
+      if (buffer[0] == STARTBYTE_SLAVE) {
+        indexSlave = index;
+        buffer[index++] = b;
+        state = STATE_WAIT_DATA_SLAVE;
+        anySlave = true;
+        ESP_LOGVV(TAG, "Slave Frame start found"); 
+      }
+
+
+      
       break;
 
     case STATE_WAIT_START_SLAVE:
@@ -125,8 +138,17 @@ void NibeGw::handleDataReceived(byte b) {
       if (index < indexSlave + buffer[indexSlave + 2] + 4) {
         break;
       }
-
+      
+    if( anySlave ){
+        anySlave = false;
+      for (byte i = 0; i < index && i < DEBUG_BUFFER_LEN / 3; i++) {
+        sprintf(debug_buf + i * 3, "%02X ", buffer[i]);
+      }
+      ESP_LOGV(TAG, "RecS: %s", debug_buf);
+    }else{
       ESP_LOGV(TAG, "Received token %02X and response", buffer[3]);
+    }
+      
       state = STATE_WAIT_ACK;
     } break;
 
