@@ -73,8 +73,31 @@ boolean NibeGw::messageStillOnProgress() {
 bool anySlave = false;
 
 int bufIndex = 0;
+char diagBuf[DEBUG_BUFFER_LEN];
 
 void NibeGw::handleDataReceived(byte b) {
+//**************************** debug print
+      //ESP_LOGVV(TAG, "act byte: %02X", b);
+      if(bufIndex < DEBUG_BUFFER_LEN / 3 ){
+        
+        if( b == STARTBYTE_MASTER && bufIndex != 0 ) {
+          ESP_LOGV(TAG, "Frame Start: %s", diagBuf);
+          bufIndex = 0;
+        }
+
+        sprintf(diagBuf + bufIndex * 3, "%02X ", b);
+        bufIndex++;
+        
+        if( b == STARTBYTE_ACK || b == STARTBYTE_NACK ) {
+          ESP_LOGV(TAG, "Frame End: %s", diagBuf);
+          bufIndex = 0;
+        }
+        
+      }else { 
+        ESP_LOGV(TAG, "Frame to long : %s", diagBuf);
+        bufIndex = 0;
+      }
+//*****************************************
   if (index >= MAX_DATA_LEN) {
     // too long message
     handleInvalidData(b);
@@ -83,21 +106,6 @@ void NibeGw::handleDataReceived(byte b) {
 
   switch (state) {
     case STATE_WAIT_START:
-      
-      //ESP_LOGVV(TAG, "act byte: %02X", b);
-      if(bufIndex < DEBUG_BUFFER_LEN / 3 ){
-        sprintf(debug_buf + bufIndex * 3, "%02X ", b);
-        bufIndex++;
-        if( b == STARTBYTE_ACK || b == STARTBYTE_NACK ) {
-          ESP_LOGV(TAG, "Frame found: %s", debug_buf);
-          bufIndex = 0;
-        }
-      }else { 
-        ESP_LOGV(TAG, "Frame to long : %s", debug_buf);
-        bufIndex = 0;
-      }
-      
-      break;
       
       buffer[0] = buffer[1];
       buffer[1] = b;
