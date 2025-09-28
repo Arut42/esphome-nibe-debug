@@ -86,7 +86,7 @@ void NibeGw::handleDataReceived(byte b) {
       
       //ESP_LOGVV(TAG, "act byte: %02X", b);
       if(bufIndex < DEBUG_BUFFER_LEN / 3 ){
-        sprintf(debug_buf + i * 3, "%02X ", b);
+        sprintf(debug_buf + bufIndex * 3, "%02X ", b);
         bufIndex++;
         if( b == STARTBYTE_ACK || b == STARTBYTE_NACK ) {
           ESP_LOGV(TAG, "Frame found: %s", debug_buf);
