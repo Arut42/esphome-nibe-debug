@@ -22,6 +22,8 @@
 
 using namespace esphome;
 
+#define DIAGBUFLEN 300
+
 NibeGw::NibeGw(esphome::uart::UARTDevice *serial, esphome::GPIOPin *RS485DirectionPin) {
   state = STATE_WAIT_START;
   connectionState = false;
@@ -73,15 +75,15 @@ boolean NibeGw::messageStillOnProgress() {
 bool anySlave = false;
 
 int bufIndex = 0;
-char diagBuf[DEBUG_BUFFER_LEN];
+char diagBuf[DIAGBUFLEN];
 
 void NibeGw::handleDataReceived(byte b) {
 //**************************** debug print
       //ESP_LOGVV(TAG, "act byte: %02X", b);
-      if(bufIndex < DEBUG_BUFFER_LEN / 3 ){
+      if(bufIndex < DIAGBUFLEN / 3 ){
         
         if( b == STARTBYTE_MASTER && bufIndex != 0 ) {
-          ESP_LOGI(TAG, "Frame Start: %s", diagBuf);
+          ESP_LOGW(TAG, "Frame Start: %s", diagBuf);
           bufIndex = 0;
         }
 
@@ -89,12 +91,12 @@ void NibeGw::handleDataReceived(byte b) {
         bufIndex++;
         
         if( b == STARTBYTE_ACK || b == STARTBYTE_NACK ) {
-          ESP_LOGI(TAG, "Frame End: %s", diagBuf);
+          ESP_LOGW(TAG, "Frame End: %s", diagBuf);
           bufIndex = 0;
         }
         
       }else { 
-        ESP_LOGI(TAG, "Frame to long : %s", diagBuf);
+        ESP_LOGW(TAG, "Frame to long : %s", diagBuf);
         bufIndex = 0;
       }
 //*****************************************
