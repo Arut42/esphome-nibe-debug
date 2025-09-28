@@ -81,7 +81,7 @@ void NibeGw::handleDataReceived(byte b) {
       if(bufIndex < DEBUG_BUFFER_LEN / 3 ){
         
         if( b == STARTBYTE_MASTER && bufIndex != 0 ) {
-          ESP_LOGV(TAG, "Frame Start: %s", diagBuf);
+          ESP_LOGI(TAG, "Frame Start: %s", diagBuf);
           bufIndex = 0;
         }
 
@@ -89,12 +89,12 @@ void NibeGw::handleDataReceived(byte b) {
         bufIndex++;
         
         if( b == STARTBYTE_ACK || b == STARTBYTE_NACK ) {
-          ESP_LOGV(TAG, "Frame End: %s", diagBuf);
+          ESP_LOGI(TAG, "Frame End: %s", diagBuf);
           bufIndex = 0;
         }
         
       }else { 
-        ESP_LOGV(TAG, "Frame to long : %s", diagBuf);
+        ESP_LOGI(TAG, "Frame to long : %s", diagBuf);
         bufIndex = 0;
       }
 //*****************************************
