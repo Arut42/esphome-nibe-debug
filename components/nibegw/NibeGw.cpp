@@ -100,7 +100,7 @@ void NibeGw::handleDataReceived(byte b) {
         }
       }
 
-      if (buffer[0] == STARTBYTE_SLAVE) {
+      if (b == STARTBYTE_SLAVE) {
         indexSlave = index;
         buffer[index++] = b;
         state = STATE_WAIT_DATA_SLAVE;
