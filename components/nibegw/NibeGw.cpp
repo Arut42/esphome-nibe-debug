@@ -82,6 +82,7 @@ void NibeGw::handleDataReceived(byte b) {
   switch (state) {
     case STATE_WAIT_START:
       ESP_LOGVV(TAG, "act byte: %02X", b);
+      break;
       
       buffer[0] = buffer[1];
       buffer[1] = b;
