@@ -128,6 +128,8 @@ void NibeGwComponent::dump_config() {
   ESP_LOGCONFIG(TAG, " Write Port: %d", udp_write_port_);
 }
 
+bool initOnce = true;
+
 void NibeGwComponent::loop() {
   if (network::is_connected() && !is_connected_) {
     ESP_LOGI(TAG, "Connecting network ports.");
@@ -148,6 +150,14 @@ void NibeGwComponent::loop() {
   } else {
     high_freq_.stop();
   }
+
+    if(initOnce){
+      initOnce = false;
+      ESP_LOGI(TAG, "Init listener for ECS Data");
+      gw_->set_request(address_, ECS_DATA_REQ, build_request_data(ECS_DATA_MSG_2, {0x32, 0x00}));
+    }
+
+  
   gw_->loop();
 }
 
