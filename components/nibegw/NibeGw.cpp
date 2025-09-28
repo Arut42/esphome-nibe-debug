@@ -156,6 +156,8 @@ void NibeGw::handleDataReceived(byte b) {
   }
 }
 
+bool writeLog = true;
+
 void NibeGw::handleExpectedAck(byte b) {
   buffer[index++] = b;
   ESP_LOGV(TAG, "Recv: %02X", b);
@@ -167,21 +169,24 @@ void NibeGw::handleExpectedAck(byte b) {
   } else {
     ESP_LOGW(TAG, "Unexpected Ack/Nack: %02X", b);
   }
+  writeLog = true;
   stateComplete(b);
 }
 
 void NibeGw::stateComplete(byte data) {
-  if (index) {
-#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
+
+  #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
+  if (writeLog) {    
     for (byte i = 0; i < index && i < DEBUG_BUFFER_LEN / 3; i++) {
       sprintf(debug_buf + i * 3, "%02X ", buffer[i]);
     }
-    ESP_LOGV(TAG, "Recv: %s", debug_buf);
-#endif
+    ESP_LOGV(TAG, "Recv: %s", debug_buf);    
   }
+  #endif
 
   callback_msg_received(buffer, index);
   state = STATE_WAIT_START;
+  writeLog = false;
   index = 0;
   buffer[1] = data;  // reset second byte
 }
