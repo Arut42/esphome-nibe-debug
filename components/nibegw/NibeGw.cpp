@@ -165,7 +165,7 @@ void NibeGw::handleDataReceived(byte b) {
       if (index < indexSlave + buffer[indexSlave + 2] + 4) {
         break;
       }
-      
+      #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
     if( anySlave ){
         anySlave = false;
       for (byte i = 0; i < index && i < DEBUG_BUFFER_LEN / 3; i++) {
@@ -175,6 +175,7 @@ void NibeGw::handleDataReceived(byte b) {
     }else{
       ESP_LOGV(TAG, "Received token %02X and response", buffer[3]);
     }
+      #endif
       
       state = STATE_WAIT_ACK;
     } break;
