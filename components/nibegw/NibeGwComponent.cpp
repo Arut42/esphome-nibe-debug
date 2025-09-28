@@ -154,7 +154,7 @@ void NibeGwComponent::loop() {
     if(initOnce){
       initOnce = false;
       ESP_LOGI(TAG, "Init listener for ECS Data");
-      gw_->set_request(address_, ECS_DATA_REQ, build_request_data(ECS_DATA_MSG_2, {0x32, 0x00}));
+      this->gw_->set_request(address_, ECS_DATA_REQ, build_request_data(ECS_DATA_MSG_2, {0x32, 0x00}));
     }
 
   
