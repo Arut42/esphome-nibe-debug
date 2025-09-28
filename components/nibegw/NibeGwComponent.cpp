@@ -130,6 +130,26 @@ void NibeGwComponent::dump_config() {
 
 bool initOnce = true;
 
+static request_data_type build_request_data(byte token, request_data_type payload) {
+  request_data_type data = {
+      STARTBYTE_SLAVE,
+      token,
+      (byte) payload.size(),
+  };
+
+  for (auto &val : payload)
+    data.push_back(val);
+
+  byte checksum = 0;
+  for (auto &val : data)
+    checksum ^= val;
+  if (checksum == 0x5c)
+    checksum = 0xc5;
+  data.push_back(checksum);
+  return data;
+}
+
+
 void NibeGwComponent::loop() {
   if (network::is_connected() && !is_connected_) {
     ESP_LOGI(TAG, "Connecting network ports.");
@@ -154,7 +174,7 @@ void NibeGwComponent::loop() {
     if(initOnce){
       initOnce = false;
       ESP_LOGI(TAG, "Init listener for ECS Data");
-      this->gw_->set_request(address_, ECS_DATA_REQ, build_request_data(ECS_DATA_MSG_2, {0x32, 0x00}));
+      set_request(DEH500, ECS_DATA_REQ, build_request_data(ECS_DATA_MSG_2, {0x32, 0x00}));
     }
 
   
