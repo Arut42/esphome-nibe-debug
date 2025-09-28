@@ -140,13 +140,10 @@ class NibeGw {
   boolean connected();
   boolean messageStillOnProgress();
   void loop();
-  void setupDeh500() 
-
-
+  
   void setAcknowledge(byte address, boolean val) {
     if (val)
-      addressAcknowledge.insert(address);
-      if(address == DEH500) setupDeh500();
+      addressAcknowledge.insert(address);      
     else
       addressAcknowledge.erase(address);
   }
