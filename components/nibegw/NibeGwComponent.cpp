@@ -1,7 +1,14 @@
 #include "NibeGwComponent.h"
+#include "esphome/components/globals/globals_component.h"
+
+byte tempb1=0, tempb2=0;
+bool newData = true;
 
 namespace esphome {
 namespace nibegw {
+
+esphome::global_name::GlobalNameComponent<bool> *g_newData_ptr; 
+esphome::global_name::GlobalNameComponent<uint8_t> *g_tempb1_ptr; 
 
 NibeGwComponent::NibeGwComponent(esphome::GPIOPin *dir_pin) {
   gw_ = new NibeGw(this, dir_pin);
@@ -212,7 +219,7 @@ void NibeGwComponent::loop() {
       set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
     }
   
-    if(newData && newData->state){
+    if(id(newData)){
       newData->state = false;
       ESP_LOGE(TAG, "New Value from HA: %02X %02X ", tempb1, tempb2);      
       set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
