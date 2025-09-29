@@ -321,17 +321,27 @@ void NibeGw::sendEnd() {
   }
 }
 
+/************************** Diag *******************************************/
+char diagSendBuf[DIAGBUFLEN];
+
 void NibeGw::sendData(const byte *const data, byte len) {
   sendBegin();
   RS485->write_array(data, len);
   sendEnd();
-
+  
+  for (byte i = 0; i < len && i < 300 / 3; i++) {
+    sprintf(diagSendBuf + i * 3, "%02X ", data[i]);
+  }
+  ESP_LOGE(TAG, "Sent: %s", diagSendBuf);
+  
+/*
 #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
   for (byte i = 0; i < len && i < DEBUG_BUFFER_LEN / 3; i++) {
     sprintf(debug_buf + i * 3, "%02X ", data[i]);
   }
   ESP_LOGV(TAG, "Sent: %s", debug_buf);
 #endif
+  */
 }
 
 void NibeGw::stateCompleteAck() {
