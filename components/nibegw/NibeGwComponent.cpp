@@ -1,14 +1,7 @@
 #include "NibeGwComponent.h"
-//#include "esphome/components/globals/globals_component.h"
-
-byte tempb1=0, tempb2=0;
-bool newData = true;
 
 namespace esphome {
 namespace nibegw {
-
-esphome::globals::GlobalsComponent<bool> *g_newData_ptr; 
-esphome::globals::GlobalsComponent<uint8_t> *g_tempb1_ptr; 
 
 NibeGwComponent::NibeGwComponent(esphome::GPIOPin *dir_pin) {
   gw_ = new NibeGw(this, dir_pin);
@@ -217,6 +210,7 @@ void NibeGwComponent::loop() {
       initOnce = false;
       ESP_LOGI(TAG, "Init listener for ECS Data");      
       set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
+      
     }
   
     if(id(newData)){
