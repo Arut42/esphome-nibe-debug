@@ -137,7 +137,7 @@ bool initOnce = true;
 */
 static request_data_type myCustomReq() {
 //request_data_type payload = { 0xFF, 0x03, 0xFF, 0x03, 0xC4, 0x02, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03 };
-  request_data_type payload = { 0x00, 0x32, 0x01, 0x33, 0x02, 0x34, 0x03, 0x35, 0x04, 0x35, 0x05, 0x36, 0x06, 0x37, 0x07 };
+  request_data_type payload = { 0x32, 0x01, 0x33, 0x02, 0x34, 0x03, 0x35, 0x04, 0x35, 0x05, 0x36, 0x06, 0x37, 0x07, 0x00  };
   request_data_type data = { STARTBYTE_SLAVE, ECS_DATA_REQ, (byte) payload.size() };  
   
   for (auto &val : payload)
@@ -152,6 +152,24 @@ static request_data_type myCustomReq() {
   data.push_back(0x06);
   return data;
 }
+//(27,EE,{C0,EE,03,EE,03,01,C1})
+static request_data_type myCustomToken() {
+  request_data_type payload = {11,22,33,44,55,66,77};
+  request_data_type data = { STARTBYTE_SLAVE, ACCESSORY_TOKEN, (byte) payload.size() };  
+  
+  for (auto &val : payload)
+    data.push_back(val);
+  
+  byte checksum = 0;
+  for (auto &val : data)
+    checksum ^= val;
+  if (checksum == 0x5c)
+    checksum = 0xc5;
+  data.push_back(checksum);
+  data.push_back(0x06);
+  return data;
+}
+
 
 
 void NibeGwComponent::loop() {
@@ -179,6 +197,7 @@ void NibeGwComponent::loop() {
       initOnce = false;
       ESP_LOGI(TAG, "Init listener for ECS Data");
       set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
+      set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
     }
 
   
