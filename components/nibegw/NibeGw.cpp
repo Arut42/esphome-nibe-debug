@@ -84,7 +84,11 @@ void NibeGw::handleDataReceived(byte b) {
       //ESP_LOGVV(TAG, "act byte: %02X", b);
       if(bufIndex < DIAGBUFLEN / 3 ){
 
-        if( (b == STARTBYTE_SLAVE || b == STARTBYTE_MASTER) && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK || bufIndex == 6){
+        if( 
+          (b == STARTBYTE_SLAVE || b == STARTBYTE_MASTER) &&
+          (bufIndex != 0) && 
+          (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK || bufIndex == 6)
+        ){
           if( startByte == STARTBYTE_SLAVE ) {
             ESP_LOGW(TAG, "Master Frame: %s", diagBuf);
             bufIndex = 0;
