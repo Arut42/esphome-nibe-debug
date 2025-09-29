@@ -77,21 +77,24 @@ bool anySlave = false;
 int bufIndex = 0;
 char diagBuf[DIAGBUFLEN];
 byte lastByte = 0;
+byte startByte = 0;
 
 void NibeGw::handleDataReceived(byte b) {
 //**************************** debug print
       //ESP_LOGVV(TAG, "act byte: %02X", b);
       if(bufIndex < DIAGBUFLEN / 3 ){
-        
-        if( b == STARTBYTE_MASTER && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK)) {
-          ESP_LOGW(TAG, "Master Frame: %s", diagBuf);
-          bufIndex = 0;
-        }
-        if( b == STARTBYTE_SLAVE && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK || bufIndex == 6)) {
-          ESP_LOGW(TAG, "Slave Frame: %s", diagBuf);
-          bufIndex = 0;
-        }
 
+        if( (b == STARTBYTE_SLAVE || b == STARTBYTE_MASTER) && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK || bufIndex == 6){
+          if( startByte == STARTBYTE_SLAVE ) {
+            ESP_LOGW(TAG, "Master Frame: %s", diagBuf);
+            bufIndex = 0;
+          }
+          if(  startByte == STARTBYTE_SLAVE ) {
+            ESP_LOGW(TAG, "Slave  Frame: %s", diagBuf);
+            bufIndex = 0;
+          }
+        }
+        if(bufIndex == 0) startByte = b;
         sprintf(diagBuf + bufIndex * 3, "%02X ", b);
         bufIndex++;
         
