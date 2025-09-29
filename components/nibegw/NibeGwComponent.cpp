@@ -1,5 +1,5 @@
 #include "NibeGwComponent.h"
-#include "esphome/components/globals/globals_component.h"
+//#include "esphome/components/globals/globals_component.h"
 
 byte tempb1=0, tempb2=0;
 bool newData = true;
@@ -7,8 +7,8 @@ bool newData = true;
 namespace esphome {
 namespace nibegw {
 
-esphome::global_name::GlobalNameComponent<bool> *g_newData_ptr; 
-esphome::global_name::GlobalNameComponent<uint8_t> *g_tempb1_ptr; 
+esphome::globals::GlobalsComponent<bool> *g_newData_ptr; 
+esphome::globals::GlobalsComponent<uint8_t> *g_tempb1_ptr; 
 
 NibeGwComponent::NibeGwComponent(esphome::GPIOPin *dir_pin) {
   gw_ = new NibeGw(this, dir_pin);
