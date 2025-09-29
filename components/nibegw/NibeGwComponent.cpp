@@ -50,8 +50,6 @@ void NibeGwComponent::callback_msg_received(const byte *const data, int len) {
 }
 
 void NibeGwComponent::token_request_cache(AsyncUDPPacket &udp, byte address, byte token) {
-  ESP_LOGE(TAG, "UDP recive size: %d data: %02X", size, udp.data() );
-  
   if (!is_connected_) {
     return;
   }
@@ -60,8 +58,9 @@ void NibeGwComponent::token_request_cache(AsyncUDPPacket &udp, byte address, byt
   if (size == 0) {
     return;
   }
-
-  ESP_LOGV(TAG, "UDP Packet token data of %d bytes received", size);
+  ESP_LOGE(TAG, "UDP recive size: %d data: %02X", size, udp.data() );
+  
+  //ESP_LOGV(TAG, "UDP Packet token data of %d bytes received", size);
 
   if (size > MAX_DATA_LEN) {
     ESP_LOGE(TAG, "UDP Packet too large: %d", size);
