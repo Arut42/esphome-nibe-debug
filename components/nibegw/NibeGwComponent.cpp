@@ -2,9 +2,9 @@
 
 #include "esphome/core/log.h" 
 #include "esphome/core/application.h"
-extern esphome::global_name::GlobalNameComponent<bool> *newData;
-extern esphome::global_name::GlobalNameComponent<byte> *tempb1;
-extern esphome::global_name::GlobalNameComponent<byte> *tempb2;
+esphome::global_name::GlobalNameComponent<bool> *newData;
+esphome::global_name::GlobalNameComponent<byte> *tempb1;
+esphome::global_name::GlobalNameComponent<byte> *tempb2;
 
 namespace esphome {
 namespace nibegw {
@@ -148,7 +148,13 @@ bool initOnce = true;
 */
 static request_data_type myCustomReq() {
 //request_data_type payload = { 0xFF, 0x03, 0xFF, 0x03, 0xC4, 0x02, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03 };
-  request_data_type payload = { tempb1->state, tempb2->state, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00 };
+  byte b[2]={0,0};
+  if(tempb1 && tempb2){
+    b[0] = tempb1.state;
+    b[1] = tempb2.state;
+  }
+  
+  request_data_type payload = { b[0], b[1], 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00 };
   request_data_type data = { STARTBYTE_SLAVE, ECS_DATA_REQ, (byte) payload.size() };  
   
   for (auto &val : payload)
@@ -212,7 +218,7 @@ void NibeGwComponent::loop() {
       set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
     }
   
-    if(newData->state){
+    if(newData && newData->state){
       newData->state = false;
       ESP_LOGE(TAG, "New Value from HA: %02X %02X ", tempb1, tempb2);      
       set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
