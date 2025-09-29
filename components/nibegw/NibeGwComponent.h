@@ -23,6 +23,9 @@
 #include "ESPAsyncUDP.h"
 #endif
 
+byte tempb1=0, tempb2=0;
+bool newData = true;
+
 namespace esphome {
 namespace nibegw {
 
