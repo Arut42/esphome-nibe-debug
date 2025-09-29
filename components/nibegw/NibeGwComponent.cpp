@@ -1,11 +1,5 @@
 #include "NibeGwComponent.h"
 
-#include "esphome/core/log.h" 
-#include "esphome/core/application.h"
-esphome::global_name::GlobalNameComponent<bool> *newData;
-esphome::global_name::GlobalNameComponent<byte> *tempb1;
-esphome::global_name::GlobalNameComponent<byte> *tempb2;
-
 namespace esphome {
 namespace nibegw {
 
