@@ -133,6 +133,7 @@ void NibeGwComponent::dump_config() {
 byte tempb1, tempb2;
 
 bool initOnce = true;
+bool newData = true;
 /*
 [13:01:27][W][nibeGW:095]: Slave  Frame: C0 90 10 FF 03 FF 03 C4 02 FF 03 FF 03 FF 03 FF 03 FF 03 7A 06 
  * Frame Slave:
@@ -199,9 +200,10 @@ void NibeGwComponent::loop() {
 
     if(initOnce){
       initOnce = false;
-      ESP_LOGI(TAG, "Init listener for ECS Data");
-      set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
+      ESP_LOGI(TAG, "Init listener for ECS Data");      
       set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
+    }else if(newData){
+      set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
     }
 
   
