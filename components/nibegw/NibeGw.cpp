@@ -76,29 +76,31 @@ bool anySlave = false;
 
 int bufIndex = 0;
 char diagBuf[DIAGBUFLEN];
+byte lastByte = 0;
 
 void NibeGw::handleDataReceived(byte b) {
 //**************************** debug print
       //ESP_LOGVV(TAG, "act byte: %02X", b);
       if(bufIndex < DIAGBUFLEN / 3 ){
         
-        if( b == STARTBYTE_MASTER && bufIndex != 0 ) {
-          ESP_LOGW(TAG, "Frame Start: %s", diagBuf);
+        if( b == STARTBYTE_MASTER && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK)) {
+          ESP_LOGW(TAG, "Master Frame: %s", diagBuf);
+          bufIndex = 0;
+        }
+        if( b == STARTBYTE_SLAVE && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK)) {
+          ESP_LOGW(TAG, "Slave Frame: %s", diagBuf);
           bufIndex = 0;
         }
 
         sprintf(diagBuf + bufIndex * 3, "%02X ", b);
         bufIndex++;
         
-        if( b == STARTBYTE_ACK || b == STARTBYTE_NACK ) {
-          ESP_LOGW(TAG, "Frame End: %s", diagBuf);
-          bufIndex = 0;
-        }
-        
       }else { 
         ESP_LOGW(TAG, "Frame to long : %s", diagBuf);
         bufIndex = 0;
       }
+
+  lastByte = b;
 //*****************************************
   if (index >= MAX_DATA_LEN) {
     // too long message
