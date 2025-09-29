@@ -129,12 +129,16 @@ void NibeGwComponent::dump_config() {
 }
 
 bool initOnce = true;
-
-
+/*
+[13:01:27][W][nibeGW:095]: Slave  Frame: C0 90 10 FF 03 FF 03 C4 02 FF 03 FF 03 FF 03 FF 03 FF 03 7A 06 
+ * Frame Slave:
+ * | C0 | CMD | LEN | DATA | CHK |
+ STARTBYTE_SLAVE 
+*/
 static request_data_type myCustomReq() {
   request_data_type data = {
-    //STARTBYTE_SLAVE,
-    STARTBYTE_MASTER, 0x00, DEH500, 0xA0, 0x02, 0x32, 0x00
+    STARTBYTE_SLAVE, 0x90, 10, 0xFF, 0x03, 0xFF, 0x03, 0xC4, 0x02, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03 
+    //          C0     90  10  FF      03    FF    03   C4   02     FF   03   FF       03   FF   03       FF   03   FF   03    crc 7A  temination 06
 };                                      //size  data  data
 
   byte checksum = 0;
