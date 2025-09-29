@@ -203,6 +203,7 @@ void NibeGwComponent::loop() {
       ESP_LOGI(TAG, "Init listener for ECS Data");      
       set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
     }else if(newData){
+      ESP_LOGE(TAG, "New Value from HA: %02X %02X ", tempb1, tempb2);      
       set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
     }
 
