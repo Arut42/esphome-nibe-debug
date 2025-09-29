@@ -26,6 +26,16 @@
 namespace esphome {
 namespace nibegw {
 
+byte tempb1=0, tempb2=0;
+bool newData = true;
+
+
+void test(byte v1, byte v2){
+  tempb1 = v1;
+  tempb2 = v2;
+  newData = true;
+}
+
 typedef std::tuple<uint16_t, byte> request_key_type;
 typedef std::vector<byte> request_data_type;
 typedef std::function<request_data_type(void)> request_provider_type;
