@@ -87,7 +87,7 @@ void NibeGw::handleDataReceived(byte b) {
           ESP_LOGW(TAG, "Master Frame: %s", diagBuf);
           bufIndex = 0;
         }
-        if( b == STARTBYTE_SLAVE && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK)) {
+        if( b == STARTBYTE_SLAVE && bufIndex != 0 && (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK || bufIndex == 6)) {
           ESP_LOGW(TAG, "Slave Frame: %s", diagBuf);
           bufIndex = 0;
         }
