@@ -30,8 +30,11 @@ byte tempb1=0, tempb2=0;
 bool newData = true;
 
 
-void test(byte v1, byte v2){
+void test1(byte v1){
   tempb1 = v1;
+  newData = true;
+}
+void test2(byte v2){
   tempb2 = v2;
   newData = true;
 }
