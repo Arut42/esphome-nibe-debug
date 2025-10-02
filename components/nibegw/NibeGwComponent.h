@@ -114,7 +114,8 @@ class NibeGwComponent : public esphome::Component, public esphome::uart::UARTDev
 class debugComp : public Component {
 
   public:
-    void set_sensor_b1(float value) {  
+
+    void set_sensor_b1(float value) {
       
         uint8_t temp_byte = static_cast<uint8_t>(round(value));
     
@@ -126,8 +127,8 @@ class debugComp : public Component {
         ESP_LOGE("custom", "!!!Zieltemperatur als Byte1: %d", target_value);    
       }
   
-    }
-    void set_sensor_b2(float value) {  
+  
+    void set_sensor_b2(float value) {
         uint8_t temp_byte = static_cast<uint8_t>(round(value));
     
         //temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
