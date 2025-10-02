@@ -27,7 +27,7 @@ namespace esphome {
 namespace nibegw {
 
 extern byte tempb1;
-extern byte tempb2:
+extern byte tempb2;
 extern bool newData;
 
 typedef std::tuple<uint16_t, byte> request_key_type;
