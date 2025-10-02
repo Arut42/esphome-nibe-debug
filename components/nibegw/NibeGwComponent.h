@@ -23,12 +23,12 @@
 #include "ESPAsyncUDP.h"
 #endif
 
-namespace esphome {
-namespace nibegw {
-
 extern byte tempb1;
 extern byte tempb2;
 extern bool newData;
+
+namespace esphome {
+namespace nibegw {
 
 typedef std::tuple<uint16_t, byte> request_key_type;
 typedef std::vector<byte> request_data_type;
@@ -115,7 +115,12 @@ class NibeGwComponent : public esphome::Component, public esphome::uart::UARTDev
 class debugComp : public Component {
 
   public:
+    void setup() override {
 
+    }
+    void loop() override {
+
+    }
     void set_sensor_b1(float value) {
       
         uint8_t temp_byte = static_cast<uint8_t>(round(value));
