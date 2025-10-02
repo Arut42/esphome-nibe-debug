@@ -1,5 +1,10 @@
 #include "NibeGwComponent.h"
 
+byte tempb1=0;
+byte tempb2=0:
+bool newData = true;
+bool initOnce = true;
+
 namespace esphome {
 namespace nibegw {
 
@@ -132,7 +137,7 @@ void NibeGwComponent::dump_config() {
 
 //byte tempb1, tempb2;
 
-bool initOnce = true;
+
 //bool newData = true;
 /*
 [13:01:27][W][nibeGW:095]: Slave  Frame: C0 90 10 FF 03 FF 03 C4 02 FF 03 FF 03 FF 03 FF 03 FF 03 7A 06 
