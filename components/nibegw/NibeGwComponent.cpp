@@ -1,7 +1,7 @@
 #include "NibeGwComponent.h"
 
 byte tempb1=0;
-byte tempb2=0:
+byte tempb2=0;
 bool newData = true;
 bool initOnce = true;
 
