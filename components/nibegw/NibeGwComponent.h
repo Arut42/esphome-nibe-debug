@@ -29,16 +29,6 @@ namespace nibegw {
 byte tempb1=0, tempb2=0;
 bool newData = true;
 
-
-void test1(byte v1){
-  tempb1 = v1;
-  newData = true;
-}
-void test2(byte v2){
-  tempb2 = v2;
-  newData = true;
-}
-
 typedef std::tuple<uint16_t, byte> request_key_type;
 typedef std::vector<byte> request_data_type;
 typedef std::function<request_data_type(void)> request_provider_type;
@@ -120,6 +110,45 @@ class NibeGwComponent : public esphome::Component, public esphome::uart::UARTDev
   void dump_config();
   void loop();
 };
+
+class debugComp : public Component {
+
+  public:
+  
+    Sensor *temp_b1;
+    Sensor *temp_b2;
+  
+    void set_sensor_b1(Sensor *sensor) {  
+      if (sensor != nullptr) {
+        float value = sensor->state;    
+        // Konvertierung direkt hier    
+        uint8_t temp_byte = static_cast<uint8_t>(round(value));
+    
+        temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
+    
+        tempb1 = temp_byte;
+        newData = true;
+
+        ESP_LOGE("custom", "!!!Zieltemperatur als Byte: %d", target_value);    
+      }
+  
+    }
+    void set_sensor_b2(Sensor *sensor) {  
+      if (sensor != nullptr) {
+        float value = sensor->state;    
+        // Konvertierung direkt hier    
+        uint8_t temp_byte = static_cast<uint8_t>(round(value));
+    
+        temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
+    
+        tempb2 = temp_byte;
+        newData = true;
+    
+        ESP_LOGE("custom", "Zieltemperatur als Byte: %d", target_value);    
+      }
+  
+  };
+
 
 }  // namespace nibegw
 }  // namespace esphome
