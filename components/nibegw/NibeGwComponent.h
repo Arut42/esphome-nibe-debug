@@ -114,37 +114,28 @@ class NibeGwComponent : public esphome::Component, public esphome::uart::UARTDev
 class debugComp : public Component {
 
   public:
-  
-    Sensor *temp_b1;
-    Sensor *temp_b2;
-  
-    void set_sensor_b1(Sensor *sensor) {  
-      if (sensor != nullptr) {
-        float value = sensor->state;    
-        // Konvertierung direkt hier    
+    void set_sensor_b1(float value) {  
+      
         uint8_t temp_byte = static_cast<uint8_t>(round(value));
     
-        temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
+        //temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
     
         tempb1 = temp_byte;
         newData = true;
 
-        ESP_LOGE("custom", "!!!Zieltemperatur als Byte: %d", target_value);    
+        ESP_LOGE("custom", "!!!Zieltemperatur als Byte1: %d", target_value);    
       }
   
     }
-    void set_sensor_b2(Sensor *sensor) {  
-      if (sensor != nullptr) {
-        float value = sensor->state;    
-        // Konvertierung direkt hier    
+    void set_sensor_b2(float value) {  
         uint8_t temp_byte = static_cast<uint8_t>(round(value));
     
-        temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
+        //temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
     
         tempb2 = temp_byte;
         newData = true;
     
-        ESP_LOGE("custom", "Zieltemperatur als Byte: %d", target_value);    
+        ESP_LOGE("custom", "Zieltemperatur als Byte2: %d", target_value);    
       }
   
   };
