@@ -124,7 +124,7 @@ class debugComp : public Component {
         tempb1 = temp_byte;
         newData = true;
 
-        ESP_LOGE("custom", "!!!Zieltemperatur als Byte1: %d", target_value);    
+        ESP_LOGE("custom", "!!!Zieltemperatur als Byte1: %d", temp_byte);
       }
   
   
@@ -136,7 +136,7 @@ class debugComp : public Component {
         tempb2 = temp_byte;
         newData = true;
     
-        ESP_LOGE("custom", "Zieltemperatur als Byte2: %d", target_value);    
+        ESP_LOGE("custom", "Zieltemperatur als Byte2: %d", temp_byte);
       }
   
   };
