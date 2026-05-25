@@ -58,7 +58,8 @@ void NibeGwComponent::token_request_cache(AsyncUDPPacket &udp, byte address, byt
   if (size == 0) {
     return;
   }
-
+  //ESP_LOGE(TAG, "UDP recive size: %d data: %02X", size, udp.data() );
+  
   ESP_LOGV(TAG, "UDP Packet token data of %d bytes received", size);
 
   if (size > MAX_DATA_LEN) {
@@ -128,26 +129,59 @@ void NibeGwComponent::dump_config() {
   ESP_LOGCONFIG(TAG, " Write Port: %d", udp_write_port_);
 }
 
+
+//byte tempb1, tempb2;
+
 bool initOnce = true;
-
-static request_data_type build_request_data(byte token, request_data_type payload) {
-  request_data_type data = {
-      STARTBYTE_SLAVE,
-      token,
-      (byte) payload.size(),
-  };
-
+//bool newData = true;
+/*
+[13:01:27][W][nibeGW:095]: Slave  Frame: C0 90 10 FF 03 FF 03 C4 02 FF 03 FF 03 FF 03 FF 03 FF 03 7A 06 
+ * Frame Slave:
+ * | C0 | CMD | LEN | DATA | CHK |
+ STARTBYTE_SLAVE 
+*/
+static request_data_type myCustomReq() {
+//request_data_type payload = { 0xFF, 0x03, 0xFF, 0x03, 0xC4, 0x02, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03, 0xFF, 0x03 };
+  byte b[2]={0,0};
+  if(tempb1 && tempb2){
+    b[0] = tempb1.state;
+    b[1] = tempb2.state;
+  }
+  
+  request_data_type payload = { b[0], b[1], 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00 };
+  request_data_type data = { STARTBYTE_SLAVE, ECS_DATA_REQ, (byte) payload.size() };  
+  
   for (auto &val : payload)
     data.push_back(val);
-
+  
   byte checksum = 0;
   for (auto &val : data)
     checksum ^= val;
   if (checksum == 0x5c)
     checksum = 0xc5;
   data.push_back(checksum);
+  data.push_back(0x06);
   return data;
 }
+//(27,EE,{C0,EE,03,EE,03,01,C1})
+static request_data_type myCustomToken() {
+  request_data_type payload = {0xE8,0x03,0x00,0x00,0x00,0x00,0x00};  // Version 1000 = 03E8 => E8 03 
+  request_data_type data = { STARTBYTE_SLAVE, ACCESSORY_TOKEN, (byte) payload.size() };  
+  
+  for (auto &val : payload)
+    data.push_back(val);
+  
+  byte checksum = 0;
+  for (auto &val : data)
+    checksum ^= val;
+  if (checksum == 0x5c)
+    checksum = 0xc5;
+  data.push_back(checksum);
+  data.push_back(0x06);
+  return data;
+}
+
+
 
 void NibeGwComponent::loop() {
   if (network::is_connected() && !is_connected_) {
@@ -170,11 +204,19 @@ void NibeGwComponent::loop() {
     high_freq_.stop();
   }
 
-  if(initOnce){
-    initOnce = false;
-    ESP_LOGI(TAG, "Init listener for ECS Data");
-    set_request(DEH500, ECS_DATA_REQ, build_request_data(ECS_DATA_MSG_2, {0x32, 0x00}));    
-  }
+  
+
+    if(initOnce){
+      initOnce = false;
+      ESP_LOGI(TAG, "Init listener for ECS Data");      
+      set_request(DEH500, ACCESSORY_TOKEN, myCustomToken() );
+    }
+  
+    if(newData && newData->state){
+      newData->state = false;
+      ESP_LOGE(TAG, "New Value from HA: %02X %02X ", tempb1, tempb2);      
+      set_request(DEH500, ECS_DATA_REQ, myCustomReq() );
+    }
 
   
   gw_->loop();
