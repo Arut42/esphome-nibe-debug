@@ -22,8 +22,6 @@
 
 using namespace esphome;
 
-#define DIAGBUFLEN 300
-
 NibeGw::NibeGw(esphome::uart::UARTDevice *serial, esphome::GPIOPin *RS485DirectionPin) {
   state = STATE_WAIT_START;
   connectionState = false;
@@ -72,43 +70,7 @@ boolean NibeGw::messageStillOnProgress() {
   return false;
 }
 
-bool anySlave = false;
-
-int bufIndex = 0;
-char diagBuf[DIAGBUFLEN];
-byte lastByte = 0;
-byte startByte = 0;
-
 void NibeGw::handleDataReceived(byte b) {
-//**************************** debug print
-      //ESP_LOGVV(TAG, "act byte: %02X", b);
-      if(bufIndex < DIAGBUFLEN / 3 ){
-
-        if( 
-          (b == STARTBYTE_SLAVE || b == STARTBYTE_MASTER) &&
-          (bufIndex != 0) && 
-          (lastByte == STARTBYTE_ACK || lastByte == STARTBYTE_NACK || bufIndex == 6)
-        ){
-          if( startByte == STARTBYTE_MASTER ) {
-            ESP_LOGW(TAG, "Master Frame: %s", diagBuf);            
-          }else if(  startByte == STARTBYTE_SLAVE ) {
-            ESP_LOGW(TAG, "Slave  Frame: %s", diagBuf);            
-          }else{
-            ESP_LOGW(TAG, "unknownFrame: %s", diagBuf);
-          }
-          bufIndex = 0;
-        }
-        if(bufIndex == 0) startByte = b;
-        sprintf(diagBuf + bufIndex * 3, "%02X ", b);
-        bufIndex++;
-        
-      }else { 
-        ESP_LOGW(TAG, "Frame to long : %s", diagBuf);
-        bufIndex = 0;
-      }
-
-  lastByte = b;
-//*****************************************
   if (index >= MAX_DATA_LEN) {
     // too long message
     handleInvalidData(b);
@@ -117,7 +79,7 @@ void NibeGw::handleDataReceived(byte b) {
 
   switch (state) {
     case STATE_WAIT_START:
-      
+
       buffer[0] = buffer[1];
       buffer[1] = b;
 
@@ -135,17 +97,6 @@ void NibeGw::handleDataReceived(byte b) {
           ESP_LOGD(TAG, "Ignoring byte %02X", b);
         }
       }
-
-      if (b == STARTBYTE_SLAVE) {
-        indexSlave = index;
-        buffer[index++] = b;
-        state = STATE_WAIT_DATA_SLAVE;
-        anySlave = true;
-        ESP_LOGVV(TAG, "Slave Frame start found"); 
-      }
-
-
-      
       break;
 
     case STATE_WAIT_START_SLAVE:
@@ -174,18 +125,8 @@ void NibeGw::handleDataReceived(byte b) {
       if (index < indexSlave + buffer[indexSlave + 2] + 4) {
         break;
       }
-      #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
-    if( anySlave ){
-        anySlave = false;
-      for (byte i = 0; i < index && i < DEBUG_BUFFER_LEN / 3; i++) {
-        sprintf(debug_buf + i * 3, "%02X ", buffer[i]);
-      }
-      ESP_LOGV(TAG, "RecS: %s", debug_buf);
-    }else{
+
       ESP_LOGV(TAG, "Received token %02X and response", buffer[3]);
-    }
-      #endif
-      
       state = STATE_WAIT_ACK;
     } break;
 
@@ -215,11 +156,9 @@ void NibeGw::handleDataReceived(byte b) {
   }
 }
 
-bool writeLog = true;
-
 void NibeGw::handleExpectedAck(byte b) {
   buffer[index++] = b;
-  //ESP_LOGV(TAG, "Recv: %02X", b);
+  ESP_LOGV(TAG, "Recv: %02X", b);
   if (b == STARTBYTE_ACK || b == STARTBYTE_NACK) {
     /* Complete */
   } else if (b == STARTBYTE_MASTER) {
@@ -228,24 +167,21 @@ void NibeGw::handleExpectedAck(byte b) {
   } else {
     ESP_LOGW(TAG, "Unexpected Ack/Nack: %02X", b);
   }
-  writeLog = true;
   stateComplete(b);
 }
 
 void NibeGw::stateComplete(byte data) {
-
-  #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
-  if (writeLog) {    
+  if (index) {
+#if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
     for (byte i = 0; i < index && i < DEBUG_BUFFER_LEN / 3; i++) {
       sprintf(debug_buf + i * 3, "%02X ", buffer[i]);
     }
-    ESP_LOGV(TAG, "Recv: %s", debug_buf);    
+    ESP_LOGV(TAG, "Recv: %s", debug_buf);
+#endif
   }
-  #endif
 
   callback_msg_received(buffer, index);
   state = STATE_WAIT_START;
-  writeLog = false;
   index = 0;
   buffer[1] = data;  // reset second byte
 }
@@ -330,27 +266,17 @@ void NibeGw::sendEnd() {
   }
 }
 
-/************************** Diag *******************************************/
-char diagSendBuf[DIAGBUFLEN];
-
 void NibeGw::sendData(const byte *const data, byte len) {
   sendBegin();
   RS485->write_array(data, len);
   sendEnd();
-  
-  for (byte i = 0; i < len && i < 300 / 3; i++) {
-    sprintf(diagSendBuf + i * 3, "%02X ", data[i]);
-  }
-  ESP_LOGE(TAG, "Sent: %s", diagSendBuf);
-  
-/*
+
 #if ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE
   for (byte i = 0; i < len && i < DEBUG_BUFFER_LEN / 3; i++) {
     sprintf(debug_buf + i * 3, "%02X ", data[i]);
   }
   ESP_LOGV(TAG, "Sent: %s", debug_buf);
 #endif
-  */
 }
 
 void NibeGw::stateCompleteAck() {

@@ -23,10 +23,6 @@
 #include "ESPAsyncUDP.h"
 #endif
 
-extern byte tempb1;
-extern byte tempb2;
-extern bool newData;
-
 namespace esphome {
 namespace nibegw {
 
@@ -111,42 +107,6 @@ class NibeGwComponent : public esphome::Component, public esphome::uart::UARTDev
   void dump_config();
   void loop();
 };
-
-class debugComp : public Component {
-
-  public:
-    void setup() override {
-
-    }
-    void loop() override {
-
-    }
-    void set_sensor_b1(float value) {
-      
-        uint8_t temp_byte = static_cast<uint8_t>(round(value));
-    
-        //temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
-    
-        tempb1 = temp_byte;
-        newData = true;
-
-        ESP_LOGE("custom", "!!!Zieltemperatur als Byte1: %d", temp_byte);
-      }
-  
-  
-    void set_sensor_b2(float value) {
-        uint8_t temp_byte = static_cast<uint8_t>(round(value));
-    
-        //temp_byte = std::min<uint8_t>(255, std::max<uint8_t>(0, temp_byte));
-    
-        tempb2 = temp_byte;
-        newData = true;
-    
-        ESP_LOGE("custom", "Zieltemperatur als Byte2: %d", temp_byte);
-      }
-  
-  };
-
 
 }  // namespace nibegw
 }  // namespace esphome
